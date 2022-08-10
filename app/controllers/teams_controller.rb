@@ -47,6 +47,14 @@ class TeamsController < ApplicationController
     @team = current_user.keep_team_id ? Team.find(current_user.keep_team_id) : current_user.teams.first
   end
 
+  def move_permission
+    @move_user = User.find(params[:user_id])
+    @team = Team.find(params[:team_id])
+    @team.update(owner_id: @move_user.id)
+    MovePermissionMailer.move_permission_mailer(@team,@move_user).deliver
+    redirect_to @team, notice: '権限を移譲しました'
+  end
+
   private
 
   def set_team
